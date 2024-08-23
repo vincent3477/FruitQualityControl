@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!--lets the browser know we are writing in html5-->
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Click Example</title>
+    <title>Fruit Quality Recognition Control</title>
+
+    
+</head>
+<body>
+    <header>
+        <h1> Fruit Quality Recognition Control </h1> <!--this is the big heading box-->
+        <h2> Know the signs of a spoiled fruit.</h2> <!--this is the paragraph header-->
+    </header>
+    <main>
+        <p> Eating spoiled fruit that has harvested mold growth can be detrimental to your health. Mold spots can be of different colors, often times dark green and white. It often contains mycotoxins, which is a substance that be threat to humanity and livestock.</p>
+        <p> If you want to determine if your fruit is considered spoiled, you can take a photo if it, upload the photo, and run the model by clicking the button below. </p>
+        <form>
+            <label for = "file-input">Select an image:</label>
+            <input type = "file" id = "file-input" accept = "image/*">
+        </form>
+        
+        <button id = "run_model">Run Model</button>
+        <p id = "response"></p>
+        <script>
+            document.getElementById('run_model').addEventListener('click', function() {
+            sendButtonClick('run_model');
+        });
+
+        
+
+        function sendButtonClick(buttonId) {
+            fetch('/button_click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ button_id: buttonId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').textContent = data.message;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        </script>
+
+    </main>
+    
+</body>
+</html>
