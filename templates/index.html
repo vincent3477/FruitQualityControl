@@ -4,8 +4,8 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Button Click Example</title>
     <title>Fruit Quality Recognition Control</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='webstyle.css') }}">
 
     
 </head>
@@ -17,37 +17,59 @@
     <main>
         <p> Eating spoiled fruit that has harvested mold growth can be detrimental to your health. Mold spots can be of different colors, often times dark green and white. It often contains mycotoxins, which is a substance that be threat to humanity and livestock.</p>
         <p> If you want to determine if your fruit is considered spoiled, you can take a photo if it, upload the photo, and run the model by clicking the button below. </p>
-        <form>
-            <label for = "file-input">Select an image:</label>
-            <input type = "file" id = "file-input" accept = "image/*">
+        <form onsubmit="submitFile(event)">
+            <input type = "file" id = "file_input" accept = "image/*">
+            <label for = "file_input" class = "file_style">Upload Image Here</label>
+            <br>
+            <p id = 'chosen_files'>Selected Files: No files uploaded.</p>
+            <input type = "submit" id = "press_submit" class = "submit_button" value = "Submit" disabled = true>
         </form>
-        
-        <button id = "run_model">Run Model</button>
+        <span style = "font-size: 30px">
+        <p id = "response_title">Your Result:</p>
         <p id = "response"></p>
+        </span>
+        
         <script>
-            document.getElementById('run_model').addEventListener('click', function() {
-            sendButtonClick('run_model');
-        });
 
         
 
-        function sendButtonClick(buttonId) {
-            fetch('/button_click', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ button_id: buttonId }),
+            document.getElementById('file_input').addEventListener('change', function(){
+                var fileName = this.files[0].name;
+                document.getElementById('chosen_files').textContent = "Selected Files: " + fileName;
+                document.getElementById('press_submit').disabled = false;
+            })
+
+            
+
+            function submitFile(event) {
+
+            document.getElementById('press_submit').disabled = true;
+
+            document.getElementById('response').innerText = "Loading..."
+
+
+            event.preventDefault()
+
+            const formData = new FormData();
+            const imgInput = document.getElementById('file_input')
+            formData.append('file', imgInput.files[0])
+
+            fetch('/upload', {
+            method: 'POST',
+            body: formData,
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('response').textContent = data.message;
+            document.getElementById('response').innerText = data.message;
+            document.getElementById('press_submit').disabled = false;
             })
             .catch(error => {
-                console.error('Error:', error);
+            console.error('Error:', error);
             });
-        }
-        
+
+
+            }
+            
         </script>
 
     </main>
